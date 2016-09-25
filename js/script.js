@@ -94,7 +94,6 @@ var gameState = {
 	togglePlayer: function() {
 		
 		if (checkVictory()) {
-			alert('Player ' + gameState.isPlayer1.bool)
 			displayWin(true);
 		} else if (++this.gameTurn === 9) {
 			displayWin(false);
@@ -131,7 +130,7 @@ var shiftIntoLSB = function (booleanValue, bit) {
 };
 
 var getCurrentBoard = function() {
-	var currentBoard = 0x1ff;
+	var currentBoard = 0;
 	
 	$(document).find('li.box').each( function() {
 		
@@ -145,7 +144,6 @@ var getCurrentBoard = function() {
   return currentBoard;
 };
 
-const EMPTY_BOARD = 0x1ff;
 const VICTORY_CONDITIONS = [0x007, 	// 0 0000 0111
 							0x038,  // 0 0011 1000
 							0x1c0,  // 1 1100 0000
@@ -155,18 +153,12 @@ const VICTORY_CONDITIONS = [0x007, 	// 0 0000 0111
 							0x111,  // 1 0001 0001
 							0x054]; // 0 0101 0100
 var checkVictory = function() {
-	var andBoardMask  = 0;
-	var andVictoryCondition = EMPTY_BOARD;
-	
-	andBoardMask = EMPTY_BOARD & getCurrentBoard();
 	
     for (var i = 0; i < VICTORY_CONDITIONS.length; i++) {
-		andVictoryCondition = VICTORY_CONDITIONS[i] & andBoardMask;
+		andVictoryCondition = VICTORY_CONDITIONS[i] & getCurrentBoard();
 
-		if ( andVictoryCondition === 0) {
+		if ( andVictoryCondition == 0) {
 			return true;
-		} else {
-			return false;
 		}
 	}
 }
