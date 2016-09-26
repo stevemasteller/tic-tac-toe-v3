@@ -17,6 +17,7 @@ $(document).on("mouseover",".box", function() {
 	}
 });
 
+// clear background image on a mouseout
 $(document).on("mouseout",".box", function() {
 	if ( !( $(this).hasClass("box-filled-1") || $(this).hasClass("box-filled-2")) ) {
 		$(this).css('background-image', 'none');
