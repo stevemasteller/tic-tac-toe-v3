@@ -1,3 +1,6 @@
+/* globals $ */			// define $ as a global for jsHint
+
+(function(){
 "use strict";
 
 /*****************************************
@@ -25,7 +28,7 @@ $(document).on("mouseout",".box", function() {
 * Display Start/Win/Tie
 ******************************************/
 var addWinScreenMarkup = function() {
-    var endScreen  = '<div class="screen screen-win" id="finish">'
+    var endScreen  = '<div class="screen screen-win" id="finish">';
 	    endScreen += 	'<header>';
         endScreen += 		'<h1>Tic Tac Toe</h1>';
         endScreen += 		'<p class="message"></p>';
@@ -34,7 +37,7 @@ var addWinScreenMarkup = function() {
 		endScreen += '</div>';
 		
 		$(endScreen).insertAfter('.screen-start');
-}
+};
 
 var addStartScreenMarkup = function() {
 	var startScreen  = '<div class="screen screen-start" id="start">';
@@ -45,14 +48,14 @@ var addStartScreenMarkup = function() {
 		startScreen += '</div>';
 	
 		$(startScreen).insertAfter('.board');
-}
+};
 
 var displayStart = function() {
 	addStartScreenMarkup();
 	addWinScreenMarkup();
 	$('.board').hide();
 	$('.screen-win').hide();
-}
+};
 
 var displayWin = function(isWin) {
 	$('.board').hide();
@@ -77,7 +80,7 @@ var displayWin = function(isWin) {
 		$('.screen-win').addClass('screen-win-tie');
 		$('.message').text("It's a Tie");
 	}
-}
+};
 
 var resetGame = function() {
 	$(document).find('li.box').removeClass(isO.box);
@@ -85,7 +88,7 @@ var resetGame = function() {
 	$(document).find('li.box').css('background-image', 'none');
 	gameState.isPlayer1 = isO;
 	gameState.gameTurn = 0;
-}
+};
 
 // Event handler for start/win button
 $(document).on('click', '.button', function() {
@@ -102,12 +105,12 @@ $(document).on('click', '.button', function() {
 const isO = {
 	box: 'box-filled-1',
 	bool: true
-}
+};
 
 const isX = {
 	box: 'box-filled-2',
 	bool: false
-}
+};
 
 var gameState = {
 	isPlayer1: isO,
@@ -185,7 +188,7 @@ var checkVictory = function() {
 		}
 	}
 	return false;
-}
+};
 	
 // Event handler for clicking on the board.
 $(document).find('li.box').on('click', function() {
@@ -203,3 +206,5 @@ $(document).find('li.box').on('click', function() {
 ******************************************/
 displayStart();
 gameState.highlightPlayer();
+
+})();
