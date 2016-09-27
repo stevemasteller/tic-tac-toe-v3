@@ -4,26 +4,6 @@
 "use strict";
 
 /*****************************************
-* AI player (IS_X)
-******************************************/
-
-var score = function(stateOfBoard) {
-
-	// check if AI wins this state
-}
-
-var AIPlayer = {
-	minMax: function() {
-		
-	},
-	
-	move: function() {
-		
-	}
-	
-}
-
-/*****************************************
 * Hover over game board and highlight 
 * potential move
 ******************************************/
@@ -86,12 +66,10 @@ var displayWin = function(isWin) {
 	if (isWin) {
 		$('.message').text("Winner");
 		if (gameState.isPlayer1.bool) {
-			$('.screen-win').addClass('.screen-win-one');
-			$('.screen-win').css('background-color', '#FFA000');
+			$('.screen-win').addClass('screen-win-one');
 			$('.screen-win').css('background-image', 'url(../img/win_o.svg)');
 		} else {
-			$('.screen-win').addClass('.screen-win-two');
-			$('.screen-win').css('background-color', '#3688C3');
+			$('.screen-win').addClass('screen-win-two');
 			$('.screen-win').css('background-image', 'url(../img/win_x.svg)');			
 		}
 		$('.screen-win').css('background-repeat', 'no-repeat');
@@ -105,6 +83,10 @@ var displayWin = function(isWin) {
 };
 
 var resetGame = function() {
+	$('.screen-win').removeClass('screen-win-one');
+	$('.screen-win').removeClass('screen-win-two');
+	$('.screen-win').removeClass('screen-win-tie');
+	$('.screen-win').css('background-image', 'none');	
 	$(document).find('li.box').removeClass(IS_O.box);
 	$(document).find('li.box').removeClass(IS_X.box);
 	$(document).find('li.box').css('background-image', 'none');
@@ -185,11 +167,6 @@ var getCurrentBoard = function(isPlayer1) {
 		if ($(this).hasClass(isPlayer1.box)) {
 			currentBoard.push(true);
 			
-		// set position to empty if neither player marked.
-		} else if ( !$(this).hasClass(IS_O.box) &&
-                    !$(this).hasClass(IS_X.box) ) {
-			currentBoard.push('empty');
-		
 		// not current player or empty so must be other player
 		} else {
 			currentBoard.push(false);
@@ -203,29 +180,21 @@ var checkVictory = function(isPlayer1, board) {
  
 	// check rows
 	for (var i = 0; i <= 6; i += 3) {
-		if (board[i]     === true && 
-		    board[i + 1] === true && 
-			board[i + 2] === true) {
+		if (board[i] && board[i + 1] && board[i + 2]) {
 			return true;
 		}
 	}
 	
 	// check columns
 	for (var i = 0; i <= 2; i++) {
-		if (board[i]     === true && 
-		    board[i + 3] === true && 
-			board[i + 6] === true) {
+		if (board[i] && board[i + 3] && board[i + 6]) {
 			return true;
 		}
 	}
 	
 	// check diagonals
-	if ((board[0] === true && 
-	     board[4] === true && 
-		 board[8] === true) || 
-	    (board[2] === true && 
-		 board[4] === true && 
-		 board[6] === true)) {
+	if ((board[0] && board[4] && board[8]) || 
+	    (board[2] && board[4] && board[6])) {
 		return true;
 	} else {
 		return false;
