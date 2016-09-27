@@ -4,7 +4,7 @@
 "use strict";
 
 /*****************************************
-* AI player (isX)
+* AI player (IS_X)
 ******************************************/
 
 var score = function(stateOfBoard) {
@@ -105,10 +105,10 @@ var displayWin = function(isWin) {
 };
 
 var resetGame = function() {
-	$(document).find('li.box').removeClass(isO.box);
-	$(document).find('li.box').removeClass(isX.box);
+	$(document).find('li.box').removeClass(IS_O.box);
+	$(document).find('li.box').removeClass(IS_X.box);
 	$(document).find('li.box').css('background-image', 'none');
-	gameState.isPlayer1 = isO;
+	gameState.isPlayer1 = IS_O;
 	gameState.gameTurn = 0;
 };
 
@@ -125,18 +125,18 @@ $(document).on('click', '.button', function() {
 /*****************************************
 * 
 ******************************************/
-const isO = {
+const IS_O = {
 	box: 'box-filled-1',
 	bool: true
 };
 
-const isX = {
+const IS_X = {
 	box: 'box-filled-2',
 	bool: false
 };
 
 var gameState = {
-	isPlayer1: isO,
+	isPlayer1: IS_O,
 	gameTurn: 0,
 	
 	togglePlayer: function() {
@@ -150,9 +150,9 @@ var gameState = {
 		} 
 		
 		if (this.isPlayer1.bool) {
-			this.isPlayer1 = isX;
+			this.isPlayer1 = IS_X;
 		} else {
-			this.isPlayer1 = isO;
+			this.isPlayer1 = IS_O;
 		}
 		this.highlightPlayer();
 	},
@@ -181,8 +181,16 @@ var getCurrentBoard = function(isPlayer1) {
 	
 	$(document).find('li.box').each( function() {
 		
+		// set position to true if current player marked
 		if ($(this).hasClass(isPlayer1.box)) {
 			currentBoard.push(true);
+			
+		// set position to empty if neither player marked.
+		} else if ( !$(this).hasClass(IS_O.box) &&
+                    !$(this).hasClass(IS_X.box) ) {
+			currentBoard.push('empty');
+		
+		// not current player or empty so must be other player
 		} else {
 			currentBoard.push(false);
 		}
@@ -195,21 +203,29 @@ var checkVictory = function(isPlayer1, board) {
  
 	// check rows
 	for (var i = 0; i <= 6; i += 3) {
-		if (board[i] && board[i + 1] && board[i + 2]) {
+		if (board[i]     === true && 
+		    board[i + 1] === true && 
+			board[i + 2] === true) {
 			return true;
 		}
 	}
 	
 	// check columns
 	for (var i = 0; i <= 2; i++) {
-		if (board[i] && board[i + 3] && board[i + 6]) {
+		if (board[i]     === true && 
+		    board[i + 3] === true && 
+			board[i + 6] === true) {
 			return true;
 		}
 	}
 	
 	// check diagonals
-	if ((board[0] && board[4] && board[8]) || 
-	    (board[2] && board[4] && board[6])) {
+	if ((board[0] === true && 
+	     board[4] === true && 
+		 board[8] === true) || 
+	    (board[2] === true && 
+		 board[4] === true && 
+		 board[6] === true)) {
 		return true;
 	} else {
 		return false;
@@ -219,7 +235,7 @@ var checkVictory = function(isPlayer1, board) {
 // Event handler for clicking on the board.
 $(document).find('li.box').on('click', function() {
 	
-	if ($(this).hasClass(isO.box) || $(this).hasClass(isX.box)) {
+	if ($(this).hasClass(IS_O.box) || $(this).hasClass(IS_X.box)) {
 		return;
 	} else {
 		gameState.setBox(this);
