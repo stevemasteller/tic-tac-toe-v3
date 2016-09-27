@@ -8,9 +8,10 @@
 * potential move
 ******************************************/
 
+// 
 $(document).on("mouseover",".box", function() {
 	if ( !( $(this).hasClass("box-filled-1") || $(this).hasClass("box-filled-2")) ) {
-		if (gameState.isPlayer1.bool) {
+		if (gameState.isPlayerO.bool) {
 			$(this).css('background-image', 'url(img/o.svg)');
 		} else {
 			$(this).css('background-image', 'url(img/x.svg)');
@@ -65,7 +66,7 @@ var displayWin = function(isWin) {
 	
 	if (isWin) {
 		$('.message').text("Winner");
-		if (gameState.isPlayer1.bool) {
+		if (gameState.isPlayerO.bool) {
 			$('.screen-win').addClass('screen-win-one');
 			$('.screen-win').css('background-image', 'url(../img/win_o.svg)');
 		} else {
@@ -90,7 +91,7 @@ var resetGame = function() {
 	$(document).find('li.box').removeClass(IS_O.box);
 	$(document).find('li.box').removeClass(IS_X.box);
 	$(document).find('li.box').css('background-image', 'none');
-	gameState.isPlayer1 = IS_O;
+	gameState.isPlayerO = IS_O;
 	gameState.gameTurn = 0;
 };
 
@@ -118,29 +119,30 @@ const IS_X = {
 };
 
 var gameState = {
-	isPlayer1: IS_O,
+	isPlayerO: IS_O,
 	gameTurn: 0,
+	board: [],
 	
 	togglePlayer: function() {
 		
-		var board = getCurrentBoard(this.isPlayer1);
+		this.getCurrentBoard();
 		
-		if (checkVictory(this.isPlayer1, board)) {
+		if (this.checkVictory()) {
 			displayWin(true);
 		} else if (++this.gameTurn === 9) {
 			displayWin(false);
 		} 
 		
-		if (this.isPlayer1.bool) {
-			this.isPlayer1 = IS_X;
+		if (this.isPlayerO.bool) {
+			this.isPlayerO = IS_X;
 		} else {
-			this.isPlayer1 = IS_O;
+			this.isPlayerO = IS_O;
 		}
 		this.highlightPlayer();
 	},
 	
 	highlightPlayer: function() {
-		if (this.isPlayer1.bool) {
+		if (this.isPlayerO.bool) {
 			$('#player1').addClass('active');
 			$('#player2').removeClass('active');
 		} else {
@@ -150,57 +152,57 @@ var gameState = {
 	},
 
 	setBox: function(box) {
-		$(box).addClass(this.isPlayer1.box);
-	}
-};
-
-// Use HTML to store the state of the board.
-//   This function returns the current players marks
-//   as true in a one dimmensional array. Oppossing 
-//	 player marks and empty squares return false.
-var getCurrentBoard = function(isPlayer1) {
-	var currentBoard = [];
+		$(box).addClass(this.isPlayerO.box);
+	},
 	
-	$(document).find('li.box').each( function() {
+	// Use HTML to store the state of the board.
+	//   This function returns the current players marks
+	//   as true in a one dimmensional array. Oppossing 
+	//	 player marks and empty squares return false.
+	getCurrentBoard: function() {
+		var currentBoard = [];
 		
-		// set position to true if current player marked
-		if ($(this).hasClass(isPlayer1.box)) {
-			currentBoard.push(true);
+		$(document).find('li.box').each( function() {
 			
-		// not current player or empty so must be other player
-		} else {
-			currentBoard.push(false);
-		}
-	});
+			// set position to true if current player marked
+			if ($(this).hasClass(gameState.isPlayerO.box)) {
+				currentBoard.push(true);
+				
+			// not current player or empty so must be other player
+			} else {
+				currentBoard.push(false);
+			}
+		});
+		
+	    this.board = currentBoard;
+	},
 	
-  return currentBoard;
+	checkVictory: function() {
+ 
+		// check rows
+		for (var i = 0; i <= 6; i += 3) {
+			if (this.board[i] && this.board[i + 1] && this.board[i + 2]) {
+				return true;
+			}
+		}
+		
+		// check columns
+		for (var i = 0; i <= 2; i++) {
+			if (this.board[i] && this.board[i + 3] && this.board[i + 6]) {
+				return true;
+			}
+		}
+		
+		// check diagonals
+		if ((this.board[0] && this.board[4] && this.board[8]) || 
+			(this.board[2] && this.board[4] && this.board[6])) {
+			return true;
+		} else {
+			return false;
+		}	
+	}
 };
 
-var checkVictory = function(isPlayer1, board) {
- 
-	// check rows
-	for (var i = 0; i <= 6; i += 3) {
-		if (board[i] && board[i + 1] && board[i + 2]) {
-			return true;
-		}
-	}
-	
-	// check columns
-	for (var i = 0; i <= 2; i++) {
-		if (board[i] && board[i + 3] && board[i + 6]) {
-			return true;
-		}
-	}
-	
-	// check diagonals
-	if ((board[0] && board[4] && board[8]) || 
-	    (board[2] && board[4] && board[6])) {
-		return true;
-	} else {
-		return false;
-	}
-};
-	
 // Event handler for clicking on the board.
 $(document).find('li.box').on('click', function() {
 	
