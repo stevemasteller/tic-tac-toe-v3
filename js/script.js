@@ -148,47 +148,49 @@ var gameState = {
 	}
 };
 
-var shiftIntoLSB = function (booleanValue, bit) {
-	
-	booleanValue = booleanValue << 1;
-	booleanValue = booleanValue | bit;
-	return booleanValue;
-};
-
+// Use HTML to store the state of the board.
+//   This function returns the current players marks
+//   as true in a one dimmensional array. Oppossing 
+//	 player marks and empty squares return false.
 var getCurrentBoard = function() {
-	var currentBoard = 0;
+	var currentBoard = [];
 	
 	$(document).find('li.box').each( function() {
 		
 		if ($(this).hasClass(gameState.isPlayer1.box)) {
-			currentBoard = shiftIntoLSB(currentBoard, 0);
+			currentBoard = push(true);
 		} else {
-			currentBoard = shiftIntoLSB(currentBoard, 1);
+			currentBoard = push(false);
 		}
 	});
 	
   return currentBoard;
 };
 
-const VICTORY_CONDITIONS = [0x007, 	// 0 0000 0111
-							0x038,  // 0 0011 1000
-							0x1c0,  // 1 1100 0000
-							0x124,  // 1 0010 0100
-							0x092,  // 0 1001 0010
-							0x049,  // 0 0100 1001
-							0x111,  // 1 0001 0001
-							0x054]; // 0 0101 0100
 var checkVictory = function() {
-	var andVictoryCondition;
-	
-    for (var i = 0; i < VICTORY_CONDITIONS.length; i++) {
-		andVictoryCondition = VICTORY_CONDITIONS[i] & getCurrentBoard();
+    var board = currentBoard();
 
-		if ( andVictoryCondition === 0) {
+	// check rows
+	for (var i = 0; i <= 6, i += 3) {
+		if (board[i] && board[i + 1] && board[i + 2]) {
 			return true;
 		}
 	}
-	return false;
+	
+	// check columns
+	for (var i = 0, i <= 2 ; i++) {
+		if (board[i] && board[i + 3] && board[i + 6]) {
+			return true;
+		}
+	}
+	
+	// check diagonals
+	if ((board[0] && board[4] && board[8]) || 
+	    (board[2] && board[4] && board[6])) {
+		return true;
+	} else {
+		return false;
+	}
 };
 	
 // Event handler for clicking on the board.
