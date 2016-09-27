@@ -4,7 +4,28 @@
 "use strict";
 
 /*****************************************
-* Hover over game board
+* AI player (isX)
+******************************************/
+
+var score = function(stateOfBoard) {
+
+	// check if AI wins this state
+}
+
+var AIPlayer = {
+	minMax: function() {
+		
+	},
+	
+	move: function() {
+		
+	}
+	
+}
+
+/*****************************************
+* Hover over game board and highlight 
+* potential move
 ******************************************/
 
 $(document).on("mouseover",".box", function() {
@@ -100,6 +121,7 @@ $(document).on('click', '.button', function() {
 	$('.board').show();
 });
 
+
 /*****************************************
 * 
 ******************************************/
@@ -119,7 +141,9 @@ var gameState = {
 	
 	togglePlayer: function() {
 		
-		if (checkVictory()) {
+		var board = getCurrentBoard(this.isPlayer1);
+		
+		if (checkVictory(this.isPlayer1, board)) {
 			displayWin(true);
 		} else if (++this.gameTurn === 9) {
 			displayWin(false);
@@ -152,33 +176,32 @@ var gameState = {
 //   This function returns the current players marks
 //   as true in a one dimmensional array. Oppossing 
 //	 player marks and empty squares return false.
-var getCurrentBoard = function() {
+var getCurrentBoard = function(isPlayer1) {
 	var currentBoard = [];
 	
 	$(document).find('li.box').each( function() {
 		
-		if ($(this).hasClass(gameState.isPlayer1.box)) {
-			currentBoard = push(true);
+		if ($(this).hasClass(isPlayer1.box)) {
+			currentBoard.push(true);
 		} else {
-			currentBoard = push(false);
+			currentBoard.push(false);
 		}
 	});
 	
   return currentBoard;
 };
 
-var checkVictory = function() {
-    var board = currentBoard();
-
+var checkVictory = function(isPlayer1, board) {
+ 
 	// check rows
-	for (var i = 0; i <= 6, i += 3) {
+	for (var i = 0; i <= 6; i += 3) {
 		if (board[i] && board[i + 1] && board[i + 2]) {
 			return true;
 		}
 	}
 	
 	// check columns
-	for (var i = 0, i <= 2 ; i++) {
+	for (var i = 0; i <= 2; i++) {
 		if (board[i] && board[i + 3] && board[i + 6]) {
 			return true;
 		}
@@ -203,6 +226,7 @@ $(document).find('li.box').on('click', function() {
 		gameState.togglePlayer();
 	}
 });
+
 
 /*****************************************
 * On load
