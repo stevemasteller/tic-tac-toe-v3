@@ -1,3 +1,13 @@
+/***********************************************************
+*
+*  Tic-Tac-Toe
+*
+*  Simple two player Tic-Tac-Toe game
+*
+*  Author: Steve Masteller
+*  Email: stevermasteller@gmail.com
+*
+************************************************************/
 /* globals $ */			// define $ as a global for jsHint
 
 (function(){
@@ -232,8 +242,8 @@ var gameState = {
 		}
 		
 		// check columns
-		for (var i = 0; i <= 2; i++) {
-			if (this.board[i] && this.board[i + 3] && this.board[i + 6]) {
+		for (var j = 0; j <= 2; j++) {
+			if (this.board[j] && this.board[j + 3] && this.board[j + 6]) {
 				return true;
 			}
 		}
