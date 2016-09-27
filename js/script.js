@@ -4,7 +4,8 @@
 "use strict";
 
 /*****************************************
-* Hover over game board
+* Hover over game board and highlight 
+* potential move
 ******************************************/
 
 $(document).on("mouseover",".box", function() {
@@ -65,12 +66,10 @@ var displayWin = function(isWin) {
 	if (isWin) {
 		$('.message').text("Winner");
 		if (gameState.isPlayer1.bool) {
-			$('.screen-win').addClass('.screen-win-one');
-			$('.screen-win').css('background-color', '#FFA000');
+			$('.screen-win').addClass('screen-win-one');
 			$('.screen-win').css('background-image', 'url(../img/win_o.svg)');
 		} else {
-			$('.screen-win').addClass('.screen-win-two');
-			$('.screen-win').css('background-color', '#3688C3');
+			$('.screen-win').addClass('screen-win-two');
 			$('.screen-win').css('background-image', 'url(../img/win_x.svg)');			
 		}
 		$('.screen-win').css('background-repeat', 'no-repeat');
@@ -84,10 +83,14 @@ var displayWin = function(isWin) {
 };
 
 var resetGame = function() {
-	$(document).find('li.box').removeClass(isO.box);
-	$(document).find('li.box').removeClass(isX.box);
+	$('.screen-win').removeClass('screen-win-one');
+	$('.screen-win').removeClass('screen-win-two');
+	$('.screen-win').removeClass('screen-win-tie');
+	$('.screen-win').css('background-image', 'none');	
+	$(document).find('li.box').removeClass(IS_O.box);
+	$(document).find('li.box').removeClass(IS_X.box);
 	$(document).find('li.box').css('background-image', 'none');
-	gameState.isPlayer1 = isO;
+	gameState.isPlayer1 = IS_O;
 	gameState.gameTurn = 0;
 };
 
@@ -100,35 +103,38 @@ $(document).on('click', '.button', function() {
 	$('.board').show();
 });
 
+
 /*****************************************
 * 
 ******************************************/
-const isO = {
+const IS_O = {
 	box: 'box-filled-1',
 	bool: true
 };
 
-const isX = {
+const IS_X = {
 	box: 'box-filled-2',
 	bool: false
 };
 
 var gameState = {
-	isPlayer1: isO,
+	isPlayer1: IS_O,
 	gameTurn: 0,
 	
 	togglePlayer: function() {
 		
-		if (checkVictory()) {
+		var board = getCurrentBoard(this.isPlayer1);
+		
+		if (checkVictory(this.isPlayer1, board)) {
 			displayWin(true);
 		} else if (++this.gameTurn === 9) {
 			displayWin(false);
 		} 
 		
 		if (this.isPlayer1.bool) {
-			this.isPlayer1 = isX;
+			this.isPlayer1 = IS_X;
 		} else {
-			this.isPlayer1 = isO;
+			this.isPlayer1 = IS_O;
 		}
 		this.highlightPlayer();
 	},
@@ -148,59 +154,64 @@ var gameState = {
 	}
 };
 
-var shiftIntoLSB = function (booleanValue, bit) {
-	
-	booleanValue = booleanValue << 1;
-	booleanValue = booleanValue | bit;
-	return booleanValue;
-};
-
-var getCurrentBoard = function() {
-	var currentBoard = 0;
+// Use HTML to store the state of the board.
+//   This function returns the current players marks
+//   as true in a one dimmensional array. Oppossing 
+//	 player marks and empty squares return false.
+var getCurrentBoard = function(isPlayer1) {
+	var currentBoard = [];
 	
 	$(document).find('li.box').each( function() {
 		
-		if ($(this).hasClass(gameState.isPlayer1.box)) {
-			currentBoard = shiftIntoLSB(currentBoard, 0);
+		// set position to true if current player marked
+		if ($(this).hasClass(isPlayer1.box)) {
+			currentBoard.push(true);
+			
+		// not current player or empty so must be other player
 		} else {
-			currentBoard = shiftIntoLSB(currentBoard, 1);
+			currentBoard.push(false);
 		}
 	});
 	
   return currentBoard;
 };
 
-const VICTORY_CONDITIONS = [0x007, 	// 0 0000 0111
-							0x038,  // 0 0011 1000
-							0x1c0,  // 1 1100 0000
-							0x124,  // 1 0010 0100
-							0x092,  // 0 1001 0010
-							0x049,  // 0 0100 1001
-							0x111,  // 1 0001 0001
-							0x054]; // 0 0101 0100
-var checkVictory = function() {
-	var andVictoryCondition;
-	
-    for (var i = 0; i < VICTORY_CONDITIONS.length; i++) {
-		andVictoryCondition = VICTORY_CONDITIONS[i] & getCurrentBoard();
-
-		if ( andVictoryCondition === 0) {
+var checkVictory = function(isPlayer1, board) {
+ 
+	// check rows
+	for (var i = 0; i <= 6; i += 3) {
+		if (board[i] && board[i + 1] && board[i + 2]) {
 			return true;
 		}
 	}
-	return false;
+	
+	// check columns
+	for (var i = 0; i <= 2; i++) {
+		if (board[i] && board[i + 3] && board[i + 6]) {
+			return true;
+		}
+	}
+	
+	// check diagonals
+	if ((board[0] && board[4] && board[8]) || 
+	    (board[2] && board[4] && board[6])) {
+		return true;
+	} else {
+		return false;
+	}
 };
 	
 // Event handler for clicking on the board.
 $(document).find('li.box').on('click', function() {
 	
-	if ($(this).hasClass(isO.box) || $(this).hasClass(isX.box)) {
+	if ($(this).hasClass(IS_O.box) || $(this).hasClass(IS_X.box)) {
 		return;
 	} else {
 		gameState.setBox(this);
 		gameState.togglePlayer();
 	}
 });
+
 
 /*****************************************
 * On load
