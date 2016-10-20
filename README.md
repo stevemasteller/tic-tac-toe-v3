@@ -2,6 +2,6 @@
 
 Two person tic-tac-toe game.
 
-Treehouse Techdegree project 4
+Treehouse Full-Stack Techdegree project 4
 
 My work: javascript, jQuery
